@@ -1,0 +1,1769 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>แบบสอบถาม SWOT | โรงเรียนคลองลานวิทยา</title>
+<link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&family=Prompt:wght@400;600;700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+  :root {
+    --primary: #1a5fa8;
+    --primary-dark: #0d3d72;
+    --primary-light: #2e7dd1;
+    --accent: #f0a500;
+    --bg: #f4f7fb;
+    --white: #ffffff;
+    --gray-50: #f8fafc;
+    --gray-100: #eef2f7;
+    --gray-200: #dce3ed;
+    --gray-400: #8a9bb5;
+    --gray-600: #4a5568;
+    --gray-800: #1e2a3a;
+    --success: #1a8f5a;
+    --danger: #c0392b;
+    --border-radius: 12px;
+    --shadow: 0 2px 12px rgba(26,95,168,0.10);
+    --shadow-lg: 0 8px 32px rgba(26,95,168,0.16);
+    --transition: all 0.2s cubic-bezier(.4,0,.2,1);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Sarabun', sans-serif;
+    background: var(--bg);
+    color: var(--gray-800);
+    min-height: 100vh;
+    font-size: 15px;
+    line-height: 1.7;
+  }
+
+  /* ===== HEADER ===== */
+  .header {
+    background: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary) 60%, var(--primary-light) 100%);
+    color: #fff;
+    padding: 0;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: 0 2px 16px rgba(13,61,114,0.25);
+  }
+  .header-inner {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 18px 24px;
+    display: flex;
+    align-items: center;
+    gap: 18px;
+  }
+  .header-logo {
+    width: 52px; height: 52px;
+    background: rgba(255,255,255,0.15);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Prompt', sans-serif;
+    font-size: 22px; font-weight: 700;
+    color: var(--accent);
+    border: 2px solid rgba(255,255,255,0.3);
+    flex-shrink: 0;
+  }
+  .header-text h1 {
+    font-family: 'Prompt', sans-serif;
+    font-size: 17px; font-weight: 700;
+    letter-spacing: 0.01em;
+  }
+  .header-text p {
+    font-size: 13px;
+    color: rgba(255,255,255,0.75);
+    margin-top: 2px;
+  }
+
+  /* ===== PROGRESS BAR ===== */
+  .progress-wrap {
+    background: var(--white);
+    border-bottom: 1px solid var(--gray-200);
+    padding: 10px 0 0;
+  }
+  .progress-inner {
+    max-width: 900px; margin: 0 auto; padding: 0 24px 10px;
+  }
+  .progress-steps {
+    display: flex; gap: 6px; align-items: center;
+    overflow-x: auto; padding-bottom: 2px;
+    scrollbar-width: none;
+  }
+  .progress-steps::-webkit-scrollbar { display: none; }
+  .step-dot {
+    display: flex; align-items: center; gap: 6px;
+    flex-shrink: 0; cursor: pointer;
+  }
+  .step-dot .dot {
+    width: 28px; height: 28px; border-radius: 50%;
+    background: var(--gray-100); border: 2px solid var(--gray-200);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 12px; font-weight: 600; color: var(--gray-400);
+    transition: var(--transition);
+  }
+  .step-dot.active .dot {
+    background: var(--primary); border-color: var(--primary);
+    color: #fff; box-shadow: 0 2px 8px rgba(26,95,168,0.3);
+  }
+  .step-dot.done .dot {
+    background: var(--success); border-color: var(--success); color: #fff;
+  }
+  .step-dot .label {
+    font-size: 12px; color: var(--gray-400); white-space: nowrap;
+  }
+  .step-dot.active .label { color: var(--primary); font-weight: 600; }
+  .step-dot.done .label { color: var(--success); }
+  .step-sep {
+    height: 1px; width: 16px; background: var(--gray-200); flex-shrink: 0;
+  }
+  .progress-bar-track {
+    height: 3px; background: var(--gray-100); border-radius: 99px; margin-top: 8px;
+    overflow: hidden;
+  }
+  .progress-bar-fill {
+    height: 100%; background: linear-gradient(90deg, var(--primary), var(--primary-light));
+    border-radius: 99px;
+    transition: width 0.4s cubic-bezier(.4,0,.2,1);
+  }
+
+  /* ===== LAYOUT ===== */
+  .main {
+    max-width: 900px; margin: 0 auto;
+    padding: 28px 16px 60px;
+  }
+
+  /* ===== SECTION CARD ===== */
+  .section-card {
+    background: var(--white);
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow);
+    overflow: hidden;
+    margin-bottom: 0;
+    display: none;
+    animation: fadeSlide 0.3s ease;
+  }
+  .section-card.active { display: block; }
+
+  @keyframes fadeSlide {
+    from { opacity: 0; transform: translateY(12px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .section-header {
+    background: linear-gradient(90deg, var(--primary-dark), var(--primary));
+    color: #fff; padding: 18px 28px;
+    display: flex; align-items: center; gap: 14px;
+  }
+  .section-num {
+    width: 36px; height: 36px; border-radius: 50%;
+    background: rgba(255,255,255,0.18);
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Prompt', sans-serif;
+    font-size: 16px; font-weight: 700;
+    flex-shrink: 0;
+  }
+  .section-title { font-family: 'Prompt', sans-serif; font-size: 16px; font-weight: 600; }
+  .section-desc { font-size: 13px; color: rgba(255,255,255,0.75); margin-top: 2px; }
+
+  .section-body { padding: 24px 28px 28px; }
+
+  /* ===== FIELD GROUP ===== */
+  .field-group { margin-bottom: 20px; }
+  .field-label {
+    display: block;
+    font-weight: 600; font-size: 14px;
+    color: var(--gray-800);
+    margin-bottom: 6px;
+  }
+  .field-label .req { color: var(--danger); margin-left: 3px; }
+
+  /* ===== INPUT/TEXTAREA ===== */
+  input[type="text"],
+  input[type="email"],
+  select,
+  textarea {
+    width: 100%;
+    padding: 10px 14px;
+    border: 1.5px solid var(--gray-200);
+    border-radius: 8px;
+    font-family: 'Sarabun', sans-serif;
+    font-size: 14px;
+    color: var(--gray-800);
+    background: var(--white);
+    transition: var(--transition);
+    outline: none;
+  }
+  input:focus, select:focus, textarea:focus {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(26,95,168,0.10);
+  }
+  textarea { resize: vertical; min-height: 90px; }
+  select { cursor: pointer; }
+
+  /* ===== SWOT QUESTION BLOCK ===== */
+  .swot-block {
+    border: 1.5px solid var(--gray-200);
+    border-radius: 10px;
+    margin-bottom: 16px;
+    overflow: hidden;
+    transition: var(--transition);
+  }
+  .swot-block:hover { border-color: var(--primary); }
+  .swot-block-header {
+    padding: 12px 16px;
+    background: var(--gray-50);
+    border-bottom: 1px solid var(--gray-200);
+    font-weight: 600; font-size: 14px;
+    color: var(--primary-dark);
+  }
+  .swot-block-sub {
+    font-size: 12px; color: var(--gray-400);
+    font-weight: 400; margin-top: 2px;
+  }
+  .swot-block-body { padding: 14px 16px; }
+
+  /* ===== RADIO CHOICE ===== */
+  .radio-group {
+    display: flex; gap: 10px; flex-wrap: wrap;
+    margin-bottom: 10px;
+  }
+  .radio-choice {
+    display: flex; align-items: center; gap: 7px;
+    cursor: pointer;
+    padding: 6px 14px;
+    border: 1.5px solid var(--gray-200);
+    border-radius: 99px;
+    font-size: 13px;
+    transition: var(--transition);
+    user-select: none;
+  }
+  .radio-choice input[type="radio"] { display: none; }
+  .radio-choice:has(input:checked) {
+    border-color: var(--primary);
+    background: rgba(26,95,168,0.07);
+    color: var(--primary-dark);
+    font-weight: 600;
+  }
+  .radio-dot {
+    width: 14px; height: 14px;
+    border: 2px solid var(--gray-400);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0; transition: var(--transition);
+  }
+  .radio-choice:has(input:checked) .radio-dot {
+    border-color: var(--primary);
+    background: var(--primary);
+    box-shadow: inset 0 0 0 3px #fff;
+  }
+
+  .detail-area { margin-top: 6px; }
+
+  /* ===== SWOT CATEGORY BADGE ===== */
+  .cat-badge {
+    display: inline-block;
+    padding: 3px 12px;
+    border-radius: 99px;
+    font-size: 12px; font-weight: 700;
+    margin-bottom: 14px;
+  }
+  .cat-strength { background: #e3f4ec; color: #1a8f5a; }
+  .cat-weakness { background: #fdecea; color: #c0392b; }
+  .cat-opportunity { background: #e8f0fe; color: #1a5fa8; }
+  .cat-threat { background: #fff3cd; color: #856404; }
+
+  /* ===== DIMENSION HEADER ===== */
+  .dim-header {
+    font-family: 'Prompt', sans-serif;
+    font-size: 14px; font-weight: 600;
+    color: var(--primary);
+    padding: 10px 0 6px;
+    border-bottom: 1.5px solid var(--gray-100);
+    margin-bottom: 14px;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .dim-header::before {
+    content: '';
+    display: inline-block;
+    width: 4px; height: 18px;
+    background: var(--primary);
+    border-radius: 99px;
+  }
+
+  /* ===== BUTTONS ===== */
+  .btn-row {
+    display: flex; gap: 12px; justify-content: flex-end;
+    margin-top: 24px; padding-top: 20px;
+    border-top: 1px solid var(--gray-100);
+  }
+  .btn {
+    padding: 11px 28px;
+    border-radius: 8px;
+    font-family: 'Sarabun', sans-serif;
+    font-size: 14px; font-weight: 600;
+    cursor: pointer; border: none;
+    transition: var(--transition);
+    outline: none;
+  }
+  .btn-outline {
+    background: #fff;
+    border: 1.5px solid var(--gray-200);
+    color: var(--gray-600);
+  }
+  .btn-outline:hover { border-color: var(--primary); color: var(--primary); }
+  .btn-primary {
+    background: var(--primary);
+    color: #fff;
+    box-shadow: 0 2px 8px rgba(26,95,168,0.25);
+  }
+  .btn-primary:hover { background: var(--primary-dark); box-shadow: 0 4px 14px rgba(26,95,168,0.35); }
+  .btn-success {
+    background: var(--success); color: #fff;
+    box-shadow: 0 2px 8px rgba(26,143,90,0.25);
+  }
+  .btn-success:hover { background: #146b44; }
+  .btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+  /* ===== ALERT ===== */
+  .alert {
+    padding: 12px 16px;
+    border-radius: 8px;
+    font-size: 13px;
+    margin-bottom: 16px;
+    display: none;
+  }
+  .alert.show { display: block; }
+  .alert-info { background: #e8f0fe; color: #1a5fa8; border: 1px solid #bdd0f5; }
+  .alert-error { background: #fdecea; color: var(--danger); border: 1px solid #f5c2bd; }
+  .alert-success { background: #e3f4ec; color: var(--success); border: 1px solid #b3dfc8; }
+
+  /* ===== SUCCESS SCREEN ===== */
+  #success-screen {
+    display: none;
+  }
+  #success-screen.show { display: block; animation: fadeSlide 0.5s ease; }
+
+  .result-top {
+    background: var(--white);
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow-lg);
+    padding: 36px 32px 28px;
+    text-align: center;
+    margin-bottom: 24px;
+  }
+  .success-icon {
+    width: 64px; height: 64px;
+    background: linear-gradient(135deg, var(--success), #1fa86a);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    margin: 0 auto 16px;
+    box-shadow: 0 4px 20px rgba(26,143,90,0.3);
+  }
+  .success-icon svg { width: 30px; height: 30px; }
+  .success-title {
+    font-family: 'Prompt', sans-serif;
+    font-size: 22px; font-weight: 700;
+    color: var(--primary-dark); margin-bottom: 8px;
+  }
+  .success-msg { color: var(--gray-600); font-size: 14px; max-width: 500px; margin: 0 auto; }
+
+  /* ===== RESULT CARDS ===== */
+  .result-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    margin-bottom: 20px;
+  }
+  @media (max-width: 700px) {
+    .result-grid { grid-template-columns: 1fr; }
+  }
+  .result-card {
+    background: var(--white);
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow);
+    overflow: hidden;
+  }
+  .result-card-header {
+    padding: 14px 20px;
+    font-family: 'Prompt', sans-serif;
+    font-size: 14px; font-weight: 700;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .result-card-header::before {
+    content: '';
+    display: inline-block;
+    width: 4px; height: 18px; border-radius: 99px;
+  }
+  .rh-strength { background: #f0faf5; color: #1a8f5a; }
+  .rh-strength::before, .rh-strength-bar { background: #1a8f5a !important; }
+  .rh-weakness { background: #fdf2f2; color: #c0392b; }
+  .rh-weakness::before, .rh-weakness-bar { background: #c0392b !important; }
+  .rh-opportunity { background: #eef4ff; color: #1a5fa8; }
+  .rh-opportunity::before, .rh-opportunity-bar { background: #1a5fa8 !important; }
+  .rh-threat { background: #fffbeb; color: #856404; }
+  .rh-threat::before, .rh-threat-bar { background: #f0a500 !important; }
+
+  .result-card-body { padding: 16px 20px; }
+  .score-row {
+    display: flex; align-items: center; gap: 10px;
+    margin-bottom: 8px; font-size: 13px;
+  }
+  .score-label { flex: 1; color: var(--gray-600); font-size: 12px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .score-bar-wrap { flex: 2; height: 7px; background: var(--gray-100); border-radius: 99px; overflow: hidden; }
+  .score-bar { height: 100%; border-radius: 99px; transition: width 1s cubic-bezier(.4,0,.2,1); }
+  .score-pct { width: 32px; text-align: right; font-size: 12px; font-weight: 700; color: var(--gray-800); }
+
+  /* ===== RADAR CHART ===== */
+  .radar-wrap {
+    background: var(--white);
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow);
+    padding: 24px 20px 20px;
+    margin-bottom: 20px;
+  }
+  .radar-title {
+    font-family: 'Prompt', sans-serif;
+    font-size: 15px; font-weight: 700;
+    color: var(--primary-dark);
+    margin-bottom: 4px;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .radar-title::before {
+    content: '';
+    display: inline-block;
+    width: 4px; height: 18px;
+    background: var(--primary);
+    border-radius: 99px;
+  }
+  .radar-desc { font-size: 12px; color: var(--gray-400); margin-bottom: 18px; margin-left: 12px; }
+  .radar-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; align-items: start; }
+  @media (max-width: 700px) { .radar-grid { grid-template-columns: 1fr; } }
+  .radar-canvas-wrap { position: relative; min-height: 280px; }
+  .radar-legend { display: flex; flex-direction: column; gap: 10px; padding-top: 20px; }
+  .legend-item {
+    display: flex; align-items: center; gap: 10px;
+    padding: 10px 14px; border-radius: 8px; border: 1px solid var(--gray-100);
+  }
+  .legend-dot { width: 12px; height: 12px; border-radius: 50%; flex-shrink: 0; }
+  .legend-text { font-size: 12px; }
+  .legend-text strong { display: block; font-weight: 700; font-size: 13px; color: var(--gray-800); }
+  .legend-text span { color: var(--gray-400); }
+
+  /* ===== COMPARE SECTION ===== */
+  .compare-wrap {
+    background: var(--white);
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow);
+    padding: 24px 20px 20px;
+    margin-bottom: 20px;
+  }
+  .compare-chart-wrap { position: relative; min-height: 320px; }
+
+  /* ===== SUMMARY TABLE ===== */
+  .summary-card {
+    background: var(--white);
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow);
+    overflow: hidden;
+    margin-bottom: 20px;
+  }
+  .summary-header {
+    background: linear-gradient(90deg, var(--primary-dark), var(--primary));
+    color: #fff; padding: 14px 20px;
+    font-family: 'Prompt', sans-serif; font-size: 14px; font-weight: 700;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .summary-header::before {
+    content: '';
+    display: inline-block;
+    width: 4px; height: 18px;
+    background: rgba(255,255,255,0.5);
+    border-radius: 99px;
+  }
+  .summary-body { padding: 16px 20px; }
+  .swot-matrix {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 12px;
+  }
+  @media (max-width: 600px) { .swot-matrix { grid-template-columns: 1fr; } }
+  .matrix-cell { border-radius: 8px; padding: 14px 16px; }
+  .matrix-cell.s { background: #f0faf5; border: 1px solid #b3dfc8; }
+  .matrix-cell.w { background: #fdf2f2; border: 1px solid #f5c2bd; }
+  .matrix-cell.o { background: #eef4ff; border: 1px solid #bdd0f5; }
+  .matrix-cell.t { background: #fffbeb; border: 1px solid #fde68a; }
+  .matrix-label { font-size: 11px; font-weight: 700; letter-spacing: 0.05em; margin-bottom: 6px; }
+  .matrix-cell.s .matrix-label { color: #1a8f5a; }
+  .matrix-cell.w .matrix-label { color: #c0392b; }
+  .matrix-cell.o .matrix-label { color: #1a5fa8; }
+  .matrix-cell.t .matrix-label { color: #856404; }
+  .matrix-score { font-family: 'Prompt', sans-serif; font-size: 28px; font-weight: 700; line-height: 1; }
+  .matrix-cell.s .matrix-score { color: #1a8f5a; }
+  .matrix-cell.w .matrix-score { color: #c0392b; }
+  .matrix-cell.o .matrix-score { color: #1a5fa8; }
+  .matrix-cell.t .matrix-score { color: #f0a500; }
+  .matrix-sub { font-size: 11px; color: var(--gray-400); margin-top: 3px; }
+
+  /* ===== LOADING ===== */
+  .loading-overlay {
+    display: none;
+    position: fixed; inset: 0;
+    background: rgba(255,255,255,0.85);
+    z-index: 9999;
+    align-items: center; justify-content: center;
+    flex-direction: column; gap: 16px;
+  }
+  .loading-overlay.show { display: flex; }
+  .spinner {
+    width: 40px; height: 40px;
+    border: 3px solid var(--gray-200);
+    border-top-color: var(--primary);
+    border-radius: 50%;
+    animation: spin 0.7s linear infinite;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .loading-text { font-size: 14px; color: var(--primary); font-weight: 600; }
+
+  /* ===== RESPONSIVE — ทุกขนาดโทรศัพท์ ===== */
+
+  /* แท็บเล็ต */
+  @media (max-width: 768px) {
+    .main { padding: 16px 12px 60px; }
+    .section-header { padding: 14px 18px; }
+    .section-body { padding: 18px 18px 22px; }
+    .result-top { padding: 28px 20px 22px; }
+    .radar-wrap, .compare-wrap { padding: 18px 14px 16px; }
+    .summary-body { padding: 12px 14px; }
+    .radar-grid { grid-template-columns: 1fr; }
+    .result-grid { grid-template-columns: 1fr; }
+    .swot-matrix { grid-template-columns: 1fr 1fr; }
+  }
+
+  /* มือถือทั่วไป */
+  @media (max-width: 600px) {
+    /* Header */
+    .header-inner { padding: 12px 14px; gap: 12px; }
+    .header-logo { width: 40px; height: 40px; font-size: 16px; flex-shrink: 0; }
+    .header-text h1 { font-size: 13px; line-height: 1.4; }
+    .header-text p { font-size: 11px; }
+
+    /* Progress */
+    .progress-inner { padding: 0 12px 8px; }
+    .step-dot .label { display: none; }
+    .step-dot .dot { width: 26px; height: 26px; font-size: 11px; }
+    .step-sep { width: 10px; }
+
+    /* Section */
+    .section-header { padding: 12px 14px; gap: 10px; }
+    .section-num { width: 30px; height: 30px; font-size: 14px; }
+    .section-title { font-size: 14px; }
+    .section-desc { font-size: 12px; }
+    .section-body { padding: 14px 14px 18px; }
+
+    /* SWOT blocks */
+    .swot-block-header { padding: 10px 12px; font-size: 13px; }
+    .swot-block-body { padding: 10px 12px; }
+    .swot-block-sub { font-size: 11px; }
+    .dim-header { font-size: 13px; }
+
+    /* Radio buttons — stack แนวตั้งบนมือถือจอเล็ก */
+    .radio-group { flex-direction: row; flex-wrap: wrap; gap: 8px; }
+    .radio-choice { padding: 7px 14px; font-size: 13px; flex: 1; justify-content: center; min-width: 120px; }
+
+    /* Buttons */
+    .btn-row { flex-direction: column; gap: 8px; margin-top: 16px; padding-top: 14px; }
+    .btn { width: 100%; text-align: center; padding: 12px 20px; font-size: 14px; }
+
+    /* Form fields */
+    .field-label { font-size: 13px; }
+    input[type="text"], input[type="email"], select, textarea {
+      font-size: 16px; /* ป้องกัน zoom อัตโนมัติบน iOS */
+      padding: 10px 12px;
+    }
+
+    /* Results */
+    .result-top { padding: 24px 16px 20px; }
+    .success-title { font-size: 18px; }
+    .success-msg { font-size: 13px; }
+    .swot-matrix { grid-template-columns: 1fr 1fr; gap: 8px; }
+    .matrix-cell { padding: 10px 12px; }
+    .matrix-score { font-size: 24px; }
+    .matrix-label { font-size: 10px; }
+    .matrix-sub { font-size: 10px; }
+    .result-grid { grid-template-columns: 1fr; gap: 12px; }
+    .radar-wrap, .compare-wrap { padding: 16px 12px 14px; }
+    .radar-title { font-size: 13px; }
+    .radar-desc { font-size: 11px; }
+    .radar-legend { gap: 8px; padding-top: 10px; }
+    .legend-item { padding: 8px 10px; }
+    .compare-chart-wrap { min-height: 240px; }
+    .radar-canvas-wrap { min-height: 240px; }
+    .summary-header { font-size: 13px; padding: 12px 14px; }
+    .summary-body { padding: 12px 12px; }
+
+    /* Score bars */
+    .score-row { gap: 6px; }
+    .score-label { font-size: 11px; }
+    .score-pct { font-size: 11px; width: 28px; }
+  }
+
+  /* มือถือจอเล็กมาก (320px) */
+  @media (max-width: 380px) {
+    .header-text h1 { font-size: 12px; }
+    .header-logo { width: 36px; height: 36px; font-size: 14px; }
+    .radio-choice { min-width: 100px; font-size: 12px; padding: 6px 10px; }
+    .swot-matrix { grid-template-columns: 1fr; }
+    .matrix-score { font-size: 22px; }
+    .section-title { font-size: 13px; }
+    .btn { font-size: 13px; padding: 11px 16px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- LOADING OVERLAY -->
+<div class="loading-overlay" id="loading-overlay">
+  <div class="spinner"></div>
+  <div class="loading-text">กำลังบันทึกข้อมูล...</div>
+</div>
+
+<!-- HEADER -->
+<header class="header">
+  <div class="header-inner">
+    <div class="header-logo">ค.ล.</div>
+    <div class="header-text">
+      <h1>แบบสอบถามสภาพแวดล้อมองค์กร (SWOT)</h1>
+      <p>โรงเรียนคลองลานวิทยา อำเภอคลองลาน จังหวัดกำแพงเพชร</p>
+    </div>
+  </div>
+</header>
+
+<!-- PROGRESS -->
+<div class="progress-wrap">
+  <div class="progress-inner">
+    <div class="progress-steps" id="progress-steps">
+      <div class="step-dot active" data-step="0">
+        <div class="dot">1</div>
+        <div class="label">ข้อมูลผู้ตอบ</div>
+      </div>
+      <div class="step-sep"></div>
+      <div class="step-dot" data-step="1">
+        <div class="dot">2</div>
+        <div class="label">จุดแข็ง</div>
+      </div>
+      <div class="step-sep"></div>
+      <div class="step-dot" data-step="2">
+        <div class="dot">3</div>
+        <div class="label">จุดอ่อน</div>
+      </div>
+      <div class="step-sep"></div>
+      <div class="step-dot" data-step="3">
+        <div class="dot">4</div>
+        <div class="label">โอกาส</div>
+      </div>
+      <div class="step-sep"></div>
+      <div class="step-dot" data-step="4">
+        <div class="dot">5</div>
+        <div class="label">อุปสรรค</div>
+      </div>
+      <div class="step-sep"></div>
+      <div class="step-dot" data-step="5">
+        <div class="dot">6</div>
+        <div class="label">ข้อเสนอแนะ</div>
+      </div>
+    </div>
+    <div class="progress-bar-track">
+      <div class="progress-bar-fill" id="progress-fill" style="width:0%"></div>
+    </div>
+  </div>
+</div>
+
+<!-- MAIN -->
+<main class="main">
+
+  <!-- SUCCESS SCREEN -->
+  <div id="success-screen">
+
+    <!-- Top thank you -->
+    <div class="result-top">
+      <div class="success-icon">
+        <svg fill="none" viewBox="0 0 24 24" stroke="white" stroke-width="2.5">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/>
+        </svg>
+      </div>
+      <div class="success-title">ขอบคุณสำหรับการตอบแบบสอบถาม</div>
+      <p class="success-msg">ข้อมูลของท่านถูกบันทึกเรียบร้อยแล้ว ด้านล่างคือสรุปผลการประเมิน SWOT จากคำตอบของท่าน เปรียบเทียบกับค่าเฉลี่ยกลุ่มที่ตอบแล้ว</p>
+    </div>
+
+    <!-- SWOT Matrix Summary -->
+    <div class="summary-card">
+      <div class="summary-header">สรุปคะแนน SWOT ของท่าน</div>
+      <div class="summary-body">
+        <div class="swot-matrix">
+          <div class="matrix-cell s">
+            <div class="matrix-label">S — จุดแข็ง (Strengths)</div>
+            <div class="matrix-score" id="score-s">0</div>
+            <div class="matrix-sub" id="score-s-sub">จากทั้งหมด 14 ข้อ</div>
+          </div>
+          <div class="matrix-cell w">
+            <div class="matrix-label">W — จุดอ่อน (Weaknesses)</div>
+            <div class="matrix-score" id="score-w">0</div>
+            <div class="matrix-sub" id="score-w-sub">จากทั้งหมด 14 ข้อ</div>
+          </div>
+          <div class="matrix-cell o">
+            <div class="matrix-label">O — โอกาส (Opportunities)</div>
+            <div class="matrix-score" id="score-o">0</div>
+            <div class="matrix-sub" id="score-o-sub">จากทั้งหมด 5 ข้อ</div>
+          </div>
+          <div class="matrix-cell t">
+            <div class="matrix-label">T — อุปสรรค (Threats)</div>
+            <div class="matrix-score" id="score-t">0</div>
+            <div class="matrix-sub" id="score-t-sub">จากทั้งหมด 5 ข้อ</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- RADAR CHART: เปรียบเทียบ 6 มิติ -->
+    <div class="radar-wrap">
+      <div class="radar-title">Radar Chart — เปรียบเทียบ 6 มิติ</div>
+      <div class="radar-desc">เปรียบเทียบคำตอบของท่าน (สีน้ำเงิน) กับค่าเฉลี่ยของผู้ตอบทั้งหมด (สีส้ม)</div>
+      <div class="radar-grid">
+        <div class="radar-canvas-wrap">
+          <canvas id="radarChart"></canvas>
+        </div>
+        <div class="radar-legend">
+          <div class="legend-item">
+            <div class="legend-dot" style="background:#1a5fa8"></div>
+            <div class="legend-text">
+              <strong>คำตอบของท่าน</strong>
+              <span>คะแนนจากแบบสอบถามที่ท่านตอบ</span>
+            </div>
+          </div>
+          <div class="legend-item">
+            <div class="legend-dot" style="background:#f0a500"></div>
+            <div class="legend-text">
+              <strong>ค่าเฉลี่ยทั้งหมด (โดยประมาณ)</strong>
+              <span>ค่าเฉลี่ยอ้างอิงจากการสำรวจโรงเรียนทั่วไป</span>
+            </div>
+          </div>
+          <div style="padding:10px 14px;background:#f8fafc;border-radius:8px;font-size:12px;color:#4a5568;border:1px solid #eef2f7">
+            แกนแต่ละแกนแสดงสัดส่วนที่ท่านระบุว่า <strong>มี</strong> ปัจจัยนั้น เทียบกับจำนวนข้อทั้งหมดในมิตินั้น (%)
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- COMPARE BAR CHART: SWOT ทั้ง 4 ด้าน -->
+    <div class="compare-wrap">
+      <div class="radar-title">Bar Chart — เปรียบเทียบ SWOT ทั้ง 4 ด้าน</div>
+      <div class="radar-desc">แสดงคะแนนรายด้านของท่าน vs ค่าเฉลี่ยอ้างอิง (%)</div>
+      <div class="compare-chart-wrap">
+        <canvas id="compareChart"></canvas>
+      </div>
+    </div>
+
+    <!-- DETAIL BARS per dimension -->
+    <div class="result-grid">
+      <div class="result-card">
+        <div class="result-card-header rh-strength">จุดแข็ง — รายมิติ</div>
+        <div class="result-card-body" id="detail-strength"></div>
+      </div>
+      <div class="result-card">
+        <div class="result-card-header rh-weakness">จุดอ่อน — รายมิติ</div>
+        <div class="result-card-body" id="detail-weakness"></div>
+      </div>
+      <div class="result-card">
+        <div class="result-card-header rh-opportunity">โอกาส — รายด้าน</div>
+        <div class="result-card-body" id="detail-opportunity"></div>
+      </div>
+      <div class="result-card">
+        <div class="result-card-header rh-threat">อุปสรรค — รายด้าน</div>
+        <div class="result-card-body" id="detail-threat"></div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- SECTION 0: ข้อมูลผู้ตอบ -->
+  <div class="section-card active" id="section-0">
+    <div class="section-header">
+      <div class="section-num">1</div>
+      <div>
+        <div class="section-title">ข้อมูลผู้ตอบแบบสอบถาม</div>
+        <div class="section-desc">กรุณากรอกข้อมูลส่วนตัวและสถานะของท่าน</div>
+      </div>
+    </div>
+    <div class="section-body">
+      <div id="alert-0" class="alert alert-error"></div>
+
+      <div class="field-group">
+        <label class="field-label">ชื่อ-นามสกุล <span class="req">*</span></label>
+        <input type="text" id="f-name" placeholder="กรุณากรอกชื่อ-นามสกุล">
+      </div>
+      <div class="field-group">
+        <label class="field-label">อีเมล <span class="req">*</span></label>
+        <input type="email" id="f-email" placeholder="example@email.com">
+      </div>
+      <div class="field-group">
+        <label class="field-label">สถานะผู้ตอบแบบสอบถาม <span class="req">*</span></label>
+        <select id="f-role">
+          <option value="">-- เลือกสถานะ --</option>
+          <option>ผู้บริหาร</option>
+          <option>ครูกลุ่มสาระการเรียนรู้ภาษาไทย</option>
+          <option>ครูกลุ่มสาระการเรียนรู้คณิตศาสตร์</option>
+          <option>ครูกลุ่มสาระการเรียนรู้วิทยาศาสตร์และเทคโนโลยี</option>
+          <option>ครูกลุ่มสาระการเรียนรู้สังคมศึกษา ศาสนา และวัฒนธรรม</option>
+          <option>ครูกลุ่มสาระการเรียนรู้สุขศึกษาและพลศึกษา</option>
+          <option>ครูกลุ่มสาระการเรียนรู้ศิลปะ</option>
+          <option>ครูกลุ่มสาระการเรียนรู้การงานอาชีพ</option>
+          <option>ครูกลุ่มสาระการเรียนรู้ภาษาต่างประเทศ</option>
+          <option>ครูกิจกรรมพัฒนาผู้เรียน (แนะแนว)</option>
+          <option>ครูกิจกรรมพัฒนาผู้เรียน (ห้องสมุด)</option>
+          <option>เจ้าหน้าที่สำนักงาน</option>
+          <option>ลูกจ้างประจำ</option>
+          <option>ลูกจ้างชั่วคราว</option>
+          <option>กรรมการสถานศึกษาขั้นพื้นฐาน</option>
+          <option>กรรมการสมาคมศิษย์เก่า ผู้ปกครอง และอดีตครู</option>
+          <option>กรรมการเครือข่ายผู้ปกครอง</option>
+          <option>กรรมการสภานักเรียน</option>
+          <option>นักเรียนโรงเรียนคลองลานวิทยา</option>
+        </select>
+      </div>
+
+      <div class="btn-row">
+        <button class="btn btn-primary" onclick="nextSection(0)">ถัดไป</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- SECTION 1: จุดแข็ง -->
+  <div class="section-card" id="section-1">
+    <div class="section-header">
+      <div class="section-num">2</div>
+      <div>
+        <div class="section-title">จุดแข็ง (Strengths)</div>
+        <div class="section-desc">ปัจจัยภายในที่โรงเรียนปฏิบัติได้ดี มีประสิทธิภาพ</div>
+      </div>
+    </div>
+    <div class="section-body">
+      <span class="cat-badge cat-strength">ปัจจัยภายใน - จุดแข็ง</span>
+
+      <!-- 2.1 โครงสร้าง -->
+      <div class="dim-header">2.1 ด้านโครงสร้าง</div>
+      <div id="S_2_1_1" class="swot-block">
+        <div class="swot-block-header">
+          2.1.1 การจัดโครงสร้างบริหาร / การแบ่งกลุ่มบริหารงานของโรงเรียน
+          <div class="swot-block-sub">การบริหารองค์กรที่ชัดเจน มีประสิทธิภาพ</div>
+        </div>
+        <div class="swot-block-body">
+          <div class="radio-group">
+            <label class="radio-choice"><input type="radio" name="S_2_1_1" value="ไม่มีจุดแข็ง" onchange="toggleDetail(this,'S_2_1_1_detail')"><div class="radio-dot"></div>ไม่มีจุดแข็ง</label>
+            <label class="radio-choice"><input type="radio" name="S_2_1_1" value="มีจุดแข็ง" onchange="toggleDetail(this,'S_2_1_1_detail')"><div class="radio-dot"></div>มีจุดแข็ง</label>
+          </div>
+          <div class="detail-area" style="display:none" id="S_2_1_1_detail">
+            <textarea id="S_2_1_1_text" placeholder="กรุณาระบุรายละเอียดจุดแข็ง..."></textarea>
+          </div>
+        </div>
+      </div>
+      <div id="S_2_1_2" class="swot-block">
+        <div class="swot-block-header">
+          2.1.2 การสื่อสารในการปฏิบัติงานของโรงเรียน
+          <div class="swot-block-sub">ระบบการสื่อสารภายในองค์กรที่มีประสิทธิภาพ</div>
+        </div>
+        <div class="swot-block-body">
+          <div class="radio-group">
+            <label class="radio-choice"><input type="radio" name="S_2_1_2" value="ไม่มีจุดแข็ง" onchange="toggleDetail(this,'S_2_1_2_detail')"><div class="radio-dot"></div>ไม่มีจุดแข็ง</label>
+            <label class="radio-choice"><input type="radio" name="S_2_1_2" value="มีจุดแข็ง" onchange="toggleDetail(this,'S_2_1_2_detail')"><div class="radio-dot"></div>มีจุดแข็ง</label>
+          </div>
+          <div class="detail-area" style="display:none" id="S_2_1_2_detail">
+            <textarea id="S_2_1_2_text" placeholder="กรุณาระบุรายละเอียดจุดแข็ง..."></textarea>
+          </div>
+        </div>
+      </div>
+
+      <!-- 2.2 คุณภาพผู้เรียน -->
+      <div class="dim-header">2.2 ด้านคุณภาพผู้เรียนและการให้บริการ</div>
+      <div class="swot-block">
+        <div class="swot-block-header">
+          2.2.1 คุณภาพผู้เรียนที่มีความโดดเด่น
+          <div class="swot-block-sub">ผลสัมฤทธิ์ การอ่าน การเขียน การคิดวิเคราะห์ นวัตกรรม ICT คุณลักษณะที่พึงประสงค์</div>
+        </div>
+        <div class="swot-block-body">
+          <div class="radio-group">
+            <label class="radio-choice"><input type="radio" name="S_2_2_1" value="ไม่มีจุดแข็ง" onchange="toggleDetail(this,'S_2_2_1_detail')"><div class="radio-dot"></div>ไม่มีจุดแข็ง</label>
+            <label class="radio-choice"><input type="radio" name="S_2_2_1" value="มีจุดแข็ง" onchange="toggleDetail(this,'S_2_2_1_detail')"><div class="radio-dot"></div>มีจุดแข็ง</label>
+          </div>
+          <div class="detail-area" style="display:none" id="S_2_2_1_detail">
+            <textarea id="S_2_2_1_text" placeholder="กรุณาระบุรายละเอียดจุดแข็ง..."></textarea>
+          </div>
+        </div>
+      </div>
+      <div class="swot-block">
+        <div class="swot-block-header">
+          2.2.2 คุณภาพการให้บริการของโรงเรียน
+          <div class="swot-block-sub">ความสะดวก รวดเร็ว เต็มใจ ตรงตามภารกิจ ผู้รับบริการพึงพอใจ</div>
+        </div>
+        <div class="swot-block-body">
+          <div class="radio-group">
+            <label class="radio-choice"><input type="radio" name="S_2_2_2" value="ไม่มีจุดแข็ง" onchange="toggleDetail(this,'S_2_2_2_detail')"><div class="radio-dot"></div>ไม่มีจุดแข็ง</label>
+            <label class="radio-choice"><input type="radio" name="S_2_2_2" value="มีจุดแข็ง" onchange="toggleDetail(this,'S_2_2_2_detail')"><div class="radio-dot"></div>มีจุดแข็ง</label>
+          </div>
+          <div class="detail-area" style="display:none" id="S_2_2_2_detail">
+            <textarea id="S_2_2_2_text" placeholder="กรุณาระบุรายละเอียดจุดแข็ง..."></textarea>
+          </div>
+        </div>
+      </div>
+
+      <!-- 2.3 บุคลากร -->
+      <div class="dim-header">2.3 ด้านบุคลากร</div>
+      <div class="swot-block">
+        <div class="swot-block-header">2.3.1 ความเพียงพอของบุคลากร</div>
+        <div class="swot-block-body">
+          <div class="radio-group">
+            <label class="radio-choice"><input type="radio" name="S_2_3_1" value="ไม่มีจุดแข็ง" onchange="toggleDetail(this,'S_2_3_1_detail')"><div class="radio-dot"></div>ไม่มีจุดแข็ง</label>
+            <label class="radio-choice"><input type="radio" name="S_2_3_1" value="มีจุดแข็ง" onchange="toggleDetail(this,'S_2_3_1_detail')"><div class="radio-dot"></div>มีจุดแข็ง</label>
+          </div>
+          <div class="detail-area" style="display:none" id="S_2_3_1_detail"><textarea id="S_2_3_1_text" placeholder="กรุณาระบุรายละเอียด..."></textarea></div>
+        </div>
+      </div>
+      <div class="swot-block">
+        <div class="swot-block-header">2.3.2 ความรู้ความเข้าใจในการปฏิบัติงาน</div>
+        <div class="swot-block-body">
+          <div class="radio-group">
+            <label class="radio-choice"><input type="radio" name="S_2_3_2" value="ไม่มีจุดแข็ง" onchange="toggleDetail(this,'S_2_3_2_detail')"><div class="radio-dot"></div>ไม่มีจุดแข็ง</label>
+            <label class="radio-choice"><input type="radio" name="S_2_3_2" value="มีจุดแข็ง" onchange="toggleDetail(this,'S_2_3_2_detail')"><div class="radio-dot"></div>มีจุดแข็ง</label>
+          </div>
+          <div class="detail-area" style="display:none" id="S_2_3_2_detail"><textarea id="S_2_3_2_text" placeholder="กรุณาระบุรายละเอียด..."></textarea></div>
+        </div>
+      </div>
+      <div class="swot-block">
+        <div class="swot-block-header">2.3.3 เจตคติต่อการทำงาน</div>
+        <div class="swot-block-body">
+          <div class="radio-group">
+            <label class="radio-choice"><input type="radio" name="S_2_3_3" value="ไม่มีจุดแข็ง" onchange="toggleDetail(this,'S_2_3_3_detail')"><div class="radio-dot"></div>ไม่มีจุดแข็ง</label>
+            <label class="radio-choice"><input type="radio" name="S_2_3_3" value="มีจุดแข็ง" onchange="toggleDetail(this,'S_2_3_3_detail')"><div class="radio-dot"></div>มีจุดแข็ง</label>
+          </div>
+          <div class="detail-area" style="display:none" id="S_2_3_3_detail"><textarea id="S_2_3_3_text" placeholder="กรุณาระบุรายละเอียด..."></textarea></div>
+        </div>
+      </div>
+      <div class="swot-block">
+        <div class="swot-block-header">2.3.4 ทักษะความสามารถในการปฏิบัติงาน</div>
+        <div class="swot-block-body">
+          <div class="radio-group">
+            <label class="radio-choice"><input type="radio" name="S_2_3_4" value="ไม่มีจุดแข็ง" onchange="toggleDetail(this,'S_2_3_4_detail')"><div class="radio-dot"></div>ไม่มีจุดแข็ง</label>
+            <label class="radio-choice"><input type="radio" name="S_2_3_4" value="มีจุดแข็ง" onchange="toggleDetail(this,'S_2_3_4_detail')"><div class="radio-dot"></div>มีจุดแข็ง</label>
+          </div>
+          <div class="detail-area" style="display:none" id="S_2_3_4_detail"><textarea id="S_2_3_4_text" placeholder="กรุณาระบุรายละเอียด..."></textarea></div>
+        </div>
+      </div>
+      <div class="swot-block">
+        <div class="swot-block-header">2.3.5 การทำงานร่วมกันเป็นทีม</div>
+        <div class="swot-block-body">
+          <div class="radio-group">
+            <label class="radio-choice"><input type="radio" name="S_2_3_5" value="ไม่มีจุดแข็ง" onchange="toggleDetail(this,'S_2_3_5_detail')"><div class="radio-dot"></div>ไม่มีจุดแข็ง</label>
+            <label class="radio-choice"><input type="radio" name="S_2_3_5" value="มีจุดแข็ง" onchange="toggleDetail(this,'S_2_3_5_detail')"><div class="radio-dot"></div>มีจุดแข็ง</label>
+          </div>
+          <div class="detail-area" style="display:none" id="S_2_3_5_detail"><textarea id="S_2_3_5_text" placeholder="กรุณาระบุรายละเอียด..."></textarea></div>
+        </div>
+      </div>
+
+      <!-- 2.4 งบประมาณ -->
+      <div class="dim-header">2.4 ด้านงบประมาณ</div>
+      <div class="swot-block">
+        <div class="swot-block-header">2.4.1 ความเพียงพอของงบประมาณ</div>
+        <div class="swot-block-body">
+          <div class="radio-group">
+            <label class="radio-choice"><input type="radio" name="S_2_4_1" value="ไม่มีจุดแข็ง" onchange="toggleDetail(this,'S_2_4_1_detail')"><div class="radio-dot"></div>ไม่มีจุดแข็ง</label>
+            <label class="radio-choice"><input type="radio" name="S_2_4_1" value="มีจุดแข็ง" onchange="toggleDetail(this,'S_2_4_1_detail')"><div class="radio-dot"></div>มีจุดแข็ง</label>
+          </div>
+          <div class="detail-area" style="display:none" id="S_2_4_1_detail"><textarea id="S_2_4_1_text" placeholder="กรุณาระบุรายละเอียด..."></textarea></div>
+        </div>
+      </div>
+      <div class="swot-block">
+        <div class="swot-block-header">2.4.2 การใช้งบประมาณอย่างคุ้มค่า</div>
+        <div class="swot-block-body">
+          <div class="radio-group">
+            <label class="radio-choice"><input type="radio" name="S_2_4_2" value="ไม่มีจุดแข็ง" onchange="toggleDetail(this,'S_2_4_2_detail')"><div class="radio-dot"></div>ไม่มีจุดแข็ง</label>
+            <label class="radio-choice"><input type="radio" name="S_2_4_2" value="มีจุดแข็ง" onchange="toggleDetail(this,'S_2_4_2_detail')"><div class="radio-dot"></div>มีจุดแข็ง</label>
+          </div>
+          <div class="detail-area" style="display:none" id="S_2_4_2_detail"><textarea id="S_2_4_2_text" placeholder="กรุณาระบุรายละเอียด..."></textarea></div>
+        </div>
+      </div>
+
+      <!-- 2.5 วัสดุ -->
+      <div class="dim-header">2.5 ด้านวัสดุอุปกรณ์และอาคารสถานที่</div>
+      <div class="swot-block">
+        <div class="swot-block-header">2.5.1 ความเพียงพอและคุณภาพของวัสดุอุปกรณ์</div>
+        <div class="swot-block-body">
+          <div class="radio-group">
+            <label class="radio-choice"><input type="radio" name="S_2_5_1" value="ไม่มีจุดแข็ง" onchange="toggleDetail(this,'S_2_5_1_detail')"><div class="radio-dot"></div>ไม่มีจุดแข็ง</label>
+            <label class="radio-choice"><input type="radio" name="S_2_5_1" value="มีจุดแข็ง" onchange="toggleDetail(this,'S_2_5_1_detail')"><div class="radio-dot"></div>มีจุดแข็ง</label>
+          </div>
+          <div class="detail-area" style="display:none" id="S_2_5_1_detail"><textarea id="S_2_5_1_text" placeholder="กรุณาระบุรายละเอียด..."></textarea></div>
+        </div>
+      </div>
+      <div class="swot-block">
+        <div class="swot-block-header">2.5.2 ความเพียงพอและคุณภาพของอาคารสถานที่</div>
+        <div class="swot-block-body">
+          <div class="radio-group">
+            <label class="radio-choice"><input type="radio" name="S_2_5_2" value="ไม่มีจุดแข็ง" onchange="toggleDetail(this,'S_2_5_2_detail')"><div class="radio-dot"></div>ไม่มีจุดแข็ง</label>
+            <label class="radio-choice"><input type="radio" name="S_2_5_2" value="มีจุดแข็ง" onchange="toggleDetail(this,'S_2_5_2_detail')"><div class="radio-dot"></div>มีจุดแข็ง</label>
+          </div>
+          <div class="detail-area" style="display:none" id="S_2_5_2_detail"><textarea id="S_2_5_2_text" placeholder="กรุณาระบุรายละเอียด..."></textarea></div>
+        </div>
+      </div>
+
+      <!-- 2.6 บริหาร -->
+      <div class="dim-header">2.6 ด้านการบริหารจัดการ</div>
+      <div class="swot-block">
+        <div class="swot-block-header">2.6.1 ระบบปฏิบัติงาน ขั้นตอน และระเบียบการทำงาน</div>
+        <div class="swot-block-body">
+          <div class="radio-group">
+            <label class="radio-choice"><input type="radio" name="S_2_6_1" value="ไม่มีจุดแข็ง" onchange="toggleDetail(this,'S_2_6_1_detail')"><div class="radio-dot"></div>ไม่มีจุดแข็ง</label>
+            <label class="radio-choice"><input type="radio" name="S_2_6_1" value="มีจุดแข็ง" onchange="toggleDetail(this,'S_2_6_1_detail')"><div class="radio-dot"></div>มีจุดแข็ง</label>
+          </div>
+          <div class="detail-area" style="display:none" id="S_2_6_1_detail"><textarea id="S_2_6_1_text" placeholder="กรุณาระบุรายละเอียด..."></textarea></div>
+        </div>
+      </div>
+
+      <div class="btn-row">
+        <button class="btn btn-outline" onclick="prevSection(1)">ย้อนกลับ</button>
+        <button class="btn btn-primary" onclick="nextSection(1)">ถัดไป</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- SECTION 2: จุดอ่อน -->
+  <div class="section-card" id="section-2">
+    <div class="section-header">
+      <div class="section-num">3</div>
+      <div>
+        <div class="section-title">จุดอ่อน (Weaknesses)</div>
+        <div class="section-desc">ปัจจัยภายในที่ควรปรับปรุงพัฒนา ขาดประสิทธิภาพ</div>
+      </div>
+    </div>
+    <div class="section-body">
+      <span class="cat-badge cat-weakness">ปัจจัยภายใน - จุดอ่อน</span>
+
+      <div class="dim-header">3.1 ด้านโครงสร้าง</div>
+      <div class="swot-block">
+        <div class="swot-block-header">3.1.1 การจัดโครงสร้างบริหาร / การแบ่งกลุ่มบริหารงาน</div>
+        <div class="swot-block-body">
+          <div class="radio-group">
+            <label class="radio-choice"><input type="radio" name="W_3_1_1" value="ไม่มีจุดอ่อน" onchange="toggleDetail(this,'W_3_1_1_detail')"><div class="radio-dot"></div>ไม่มีจุดอ่อน</label>
+            <label class="radio-choice"><input type="radio" name="W_3_1_1" value="มีจุดอ่อน" onchange="toggleDetail(this,'W_3_1_1_detail')"><div class="radio-dot"></div>มีจุดอ่อน</label>
+          </div>
+          <div class="detail-area" style="display:none" id="W_3_1_1_detail"><textarea id="W_3_1_1_text" placeholder="กรุณาระบุรายละเอียดจุดอ่อน..."></textarea></div>
+        </div>
+      </div>
+      <div class="swot-block">
+        <div class="swot-block-header">3.1.2 การสื่อสารในการปฏิบัติงานของโรงเรียน</div>
+        <div class="swot-block-body">
+          <div class="radio-group">
+            <label class="radio-choice"><input type="radio" name="W_3_1_2" value="ไม่มีจุดอ่อน" onchange="toggleDetail(this,'W_3_1_2_detail')"><div class="radio-dot"></div>ไม่มีจุดอ่อน</label>
+            <label class="radio-choice"><input type="radio" name="W_3_1_2" value="มีจุดอ่อน" onchange="toggleDetail(this,'W_3_1_2_detail')"><div class="radio-dot"></div>มีจุดอ่อน</label>
+          </div>
+          <div class="detail-area" style="display:none" id="W_3_1_2_detail"><textarea id="W_3_1_2_text" placeholder="กรุณาระบุรายละเอียด..."></textarea></div>
+        </div>
+      </div>
+
+      <div class="dim-header">3.2 ด้านคุณภาพผู้เรียนและการให้บริการ</div>
+      <div class="swot-block">
+        <div class="swot-block-header">3.2.1 คุณภาพผู้เรียน</div>
+        <div class="swot-block-body">
+          <div class="radio-group">
+            <label class="radio-choice"><input type="radio" name="W_3_2_1" value="ไม่มีจุดอ่อน" onchange="toggleDetail(this,'W_3_2_1_detail')"><div class="radio-dot"></div>ไม่มีจุดอ่อน</label>
+            <label class="radio-choice"><input type="radio" name="W_3_2_1" value="มีจุดอ่อน" onchange="toggleDetail(this,'W_3_2_1_detail')"><div class="radio-dot"></div>มีจุดอ่อน</label>
+          </div>
+          <div class="detail-area" style="display:none" id="W_3_2_1_detail"><textarea id="W_3_2_1_text" placeholder="กรุณาระบุรายละเอียด..."></textarea></div>
+        </div>
+      </div>
+      <div class="swot-block">
+        <div class="swot-block-header">3.2.2 คุณภาพการให้บริการ</div>
+        <div class="swot-block-body">
+          <div class="radio-group">
+            <label class="radio-choice"><input type="radio" name="W_3_2_2" value="ไม่มีจุดอ่อน" onchange="toggleDetail(this,'W_3_2_2_detail')"><div class="radio-dot"></div>ไม่มีจุดอ่อน</label>
+            <label class="radio-choice"><input type="radio" name="W_3_2_2" value="มีจุดอ่อน" onchange="toggleDetail(this,'W_3_2_2_detail')"><div class="radio-dot"></div>มีจุดอ่อน</label>
+          </div>
+          <div class="detail-area" style="display:none" id="W_3_2_2_detail"><textarea id="W_3_2_2_text" placeholder="กรุณาระบุรายละเอียด..."></textarea></div>
+        </div>
+      </div>
+
+      <div class="dim-header">3.3 ด้านบุคลากร</div>
+      <div class="swot-block">
+        <div class="swot-block-header">3.3.1 ความเพียงพอของบุคลากร</div>
+        <div class="swot-block-body">
+          <div class="radio-group">
+            <label class="radio-choice"><input type="radio" name="W_3_3_1" value="ไม่มีจุดอ่อน" onchange="toggleDetail(this,'W_3_3_1_detail')"><div class="radio-dot"></div>ไม่มีจุดอ่อน</label>
+            <label class="radio-choice"><input type="radio" name="W_3_3_1" value="มีจุดอ่อน" onchange="toggleDetail(this,'W_3_3_1_detail')"><div class="radio-dot"></div>มีจุดอ่อน</label>
+          </div>
+          <div class="detail-area" style="display:none" id="W_3_3_1_detail"><textarea id="W_3_3_1_text" placeholder="กรุณาระบุรายละเอียด..."></textarea></div>
+        </div>
+      </div>
+      <div class="swot-block">
+        <div class="swot-block-header">3.3.2 ความรู้ความเข้าใจในการปฏิบัติงาน</div>
+        <div class="swot-block-body">
+          <div class="radio-group">
+            <label class="radio-choice"><input type="radio" name="W_3_3_2" value="ไม่มีจุดอ่อน" onchange="toggleDetail(this,'W_3_3_2_detail')"><div class="radio-dot"></div>ไม่มีจุดอ่อน</label>
+            <label class="radio-choice"><input type="radio" name="W_3_3_2" value="มีจุดอ่อน" onchange="toggleDetail(this,'W_3_3_2_detail')"><div class="radio-dot"></div>มีจุดอ่อน</label>
+          </div>
+          <div class="detail-area" style="display:none" id="W_3_3_2_detail"><textarea id="W_3_3_2_text" placeholder="กรุณาระบุรายละเอียด..."></textarea></div>
+        </div>
+      </div>
+      <div class="swot-block">
+        <div class="swot-block-header">3.3.3 เจตคติต่อการทำงาน</div>
+        <div class="swot-block-body">
+          <div class="radio-group">
+            <label class="radio-choice"><input type="radio" name="W_3_3_3" value="ไม่มีจุดอ่อน" onchange="toggleDetail(this,'W_3_3_3_detail')"><div class="radio-dot"></div>ไม่มีจุดอ่อน</label>
+            <label class="radio-choice"><input type="radio" name="W_3_3_3" value="มีจุดอ่อน" onchange="toggleDetail(this,'W_3_3_3_detail')"><div class="radio-dot"></div>มีจุดอ่อน</label>
+          </div>
+          <div class="detail-area" style="display:none" id="W_3_3_3_detail"><textarea id="W_3_3_3_text" placeholder="กรุณาระบุรายละเอียด..."></textarea></div>
+        </div>
+      </div>
+      <div class="swot-block">
+        <div class="swot-block-header">3.3.4 ทักษะความสามารถในการปฏิบัติงาน</div>
+        <div class="swot-block-body">
+          <div class="radio-group">
+            <label class="radio-choice"><input type="radio" name="W_3_3_4" value="ไม่มีจุดอ่อน" onchange="toggleDetail(this,'W_3_3_4_detail')"><div class="radio-dot"></div>ไม่มีจุดอ่อน</label>
+            <label class="radio-choice"><input type="radio" name="W_3_3_4" value="มีจุดอ่อน" onchange="toggleDetail(this,'W_3_3_4_detail')"><div class="radio-dot"></div>มีจุดอ่อน</label>
+          </div>
+          <div class="detail-area" style="display:none" id="W_3_3_4_detail"><textarea id="W_3_3_4_text" placeholder="กรุณาระบุรายละเอียด..."></textarea></div>
+        </div>
+      </div>
+      <div class="swot-block">
+        <div class="swot-block-header">3.3.5 การทำงานร่วมกันเป็นทีม</div>
+        <div class="swot-block-body">
+          <div class="radio-group">
+            <label class="radio-choice"><input type="radio" name="W_3_3_5" value="ไม่มีจุดอ่อน" onchange="toggleDetail(this,'W_3_3_5_detail')"><div class="radio-dot"></div>ไม่มีจุดอ่อน</label>
+            <label class="radio-choice"><input type="radio" name="W_3_3_5" value="มีจุดอ่อน" onchange="toggleDetail(this,'W_3_3_5_detail')"><div class="radio-dot"></div>มีจุดอ่อน</label>
+          </div>
+          <div class="detail-area" style="display:none" id="W_3_3_5_detail"><textarea id="W_3_3_5_text" placeholder="กรุณาระบุรายละเอียด..."></textarea></div>
+        </div>
+      </div>
+
+      <div class="dim-header">3.4 ด้านงบประมาณ</div>
+      <div class="swot-block">
+        <div class="swot-block-header">3.4.1 ความเพียงพอของงบประมาณ</div>
+        <div class="swot-block-body">
+          <div class="radio-group">
+            <label class="radio-choice"><input type="radio" name="W_3_4_1" value="ไม่มีจุดอ่อน" onchange="toggleDetail(this,'W_3_4_1_detail')"><div class="radio-dot"></div>ไม่มีจุดอ่อน</label>
+            <label class="radio-choice"><input type="radio" name="W_3_4_1" value="มีจุดอ่อน" onchange="toggleDetail(this,'W_3_4_1_detail')"><div class="radio-dot"></div>มีจุดอ่อน</label>
+          </div>
+          <div class="detail-area" style="display:none" id="W_3_4_1_detail"><textarea id="W_3_4_1_text" placeholder="กรุณาระบุรายละเอียด..."></textarea></div>
+        </div>
+      </div>
+      <div class="swot-block">
+        <div class="swot-block-header">3.4.2 การใช้งบประมาณอย่างคุ้มค่า</div>
+        <div class="swot-block-body">
+          <div class="radio-group">
+            <label class="radio-choice"><input type="radio" name="W_3_4_2" value="ไม่มีจุดอ่อน" onchange="toggleDetail(this,'W_3_4_2_detail')"><div class="radio-dot"></div>ไม่มีจุดอ่อน</label>
+            <label class="radio-choice"><input type="radio" name="W_3_4_2" value="มีจุดอ่อน" onchange="toggleDetail(this,'W_3_4_2_detail')"><div class="radio-dot"></div>มีจุดอ่อน</label>
+          </div>
+          <div class="detail-area" style="display:none" id="W_3_4_2_detail"><textarea id="W_3_4_2_text" placeholder="กรุณาระบุรายละเอียด..."></textarea></div>
+        </div>
+      </div>
+
+      <div class="dim-header">3.5 ด้านวัสดุอุปกรณ์และอาคารสถานที่</div>
+      <div class="swot-block">
+        <div class="swot-block-header">3.5.1 ความเพียงพอและคุณภาพของวัสดุอุปกรณ์</div>
+        <div class="swot-block-body">
+          <div class="radio-group">
+            <label class="radio-choice"><input type="radio" name="W_3_5_1" value="ไม่มีจุดอ่อน" onchange="toggleDetail(this,'W_3_5_1_detail')"><div class="radio-dot"></div>ไม่มีจุดอ่อน</label>
+            <label class="radio-choice"><input type="radio" name="W_3_5_1" value="มีจุดอ่อน" onchange="toggleDetail(this,'W_3_5_1_detail')"><div class="radio-dot"></div>มีจุดอ่อน</label>
+          </div>
+          <div class="detail-area" style="display:none" id="W_3_5_1_detail"><textarea id="W_3_5_1_text" placeholder="กรุณาระบุรายละเอียด..."></textarea></div>
+        </div>
+      </div>
+      <div class="swot-block">
+        <div class="swot-block-header">3.5.2 ความเพียงพอและคุณภาพของอาคารสถานที่</div>
+        <div class="swot-block-body">
+          <div class="radio-group">
+            <label class="radio-choice"><input type="radio" name="W_3_5_2" value="ไม่มีจุดอ่อน" onchange="toggleDetail(this,'W_3_5_2_detail')"><div class="radio-dot"></div>ไม่มีจุดอ่อน</label>
+            <label class="radio-choice"><input type="radio" name="W_3_5_2" value="มีจุดอ่อน" onchange="toggleDetail(this,'W_3_5_2_detail')"><div class="radio-dot"></div>มีจุดอ่อน</label>
+          </div>
+          <div class="detail-area" style="display:none" id="W_3_5_2_detail"><textarea id="W_3_5_2_text" placeholder="กรุณาระบุรายละเอียด..."></textarea></div>
+        </div>
+      </div>
+
+      <div class="dim-header">3.6 ด้านการบริหารจัดการ</div>
+      <div class="swot-block">
+        <div class="swot-block-header">3.6.1 ระบบปฏิบัติงาน ขั้นตอน และระเบียบการทำงาน</div>
+        <div class="swot-block-body">
+          <div class="radio-group">
+            <label class="radio-choice"><input type="radio" name="W_3_6_1" value="ไม่มีจุดอ่อน" onchange="toggleDetail(this,'W_3_6_1_detail')"><div class="radio-dot"></div>ไม่มีจุดอ่อน</label>
+            <label class="radio-choice"><input type="radio" name="W_3_6_1" value="มีจุดอ่อน" onchange="toggleDetail(this,'W_3_6_1_detail')"><div class="radio-dot"></div>มีจุดอ่อน</label>
+          </div>
+          <div class="detail-area" style="display:none" id="W_3_6_1_detail"><textarea id="W_3_6_1_text" placeholder="กรุณาระบุรายละเอียด..."></textarea></div>
+        </div>
+      </div>
+
+      <div class="btn-row">
+        <button class="btn btn-outline" onclick="prevSection(2)">ย้อนกลับ</button>
+        <button class="btn btn-primary" onclick="nextSection(2)">ถัดไป</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- SECTION 3: โอกาส -->
+  <div class="section-card" id="section-3">
+    <div class="section-header">
+      <div class="section-num">4</div>
+      <div>
+        <div class="section-title">โอกาส (Opportunities)</div>
+        <div class="section-desc">ปัจจัยภายนอกที่มีผลดีหรือเป็นประโยชน์ต่อโรงเรียน</div>
+      </div>
+    </div>
+    <div class="section-body">
+      <span class="cat-badge cat-opportunity">ปัจจัยภายนอก - โอกาส</span>
+
+      <div class="dim-header">4.1 ด้านนักเรียน</div>
+      <div class="swot-block">
+        <div class="swot-block-header">คุณลักษณะผู้เรียนและแนวโน้มในอนาคต ที่เป็นประโยชน์ต่อโรงเรียน</div>
+        <div class="swot-block-body">
+          <div class="radio-group">
+            <label class="radio-choice"><input type="radio" name="O_4_1" value="ไม่มีปัจจัยที่เป็นโอกาส" onchange="toggleDetail(this,'O_4_1_detail')"><div class="radio-dot"></div>ไม่มีปัจจัย</label>
+            <label class="radio-choice"><input type="radio" name="O_4_1" value="มีปัจจัยที่เป็นโอกาส" onchange="toggleDetail(this,'O_4_1_detail')"><div class="radio-dot"></div>มีปัจจัย</label>
+          </div>
+          <div class="detail-area" style="display:none" id="O_4_1_detail"><textarea id="O_4_1_text" placeholder="กรุณาระบุรายละเอียดโอกาส..."></textarea></div>
+        </div>
+      </div>
+
+      <div class="dim-header">4.2 ด้านการเมืองและนโยบาย</div>
+      <div class="swot-block">
+        <div class="swot-block-header">นโยบายรัฐ กระทรวงศึกษาฯ สพม. และองค์การปกครองท้องถิ่น ที่เป็นประโยชน์</div>
+        <div class="swot-block-body">
+          <div class="radio-group">
+            <label class="radio-choice"><input type="radio" name="O_4_2" value="ไม่มีปัจจัยที่เป็นโอกาส" onchange="toggleDetail(this,'O_4_2_detail')"><div class="radio-dot"></div>ไม่มีปัจจัย</label>
+            <label class="radio-choice"><input type="radio" name="O_4_2" value="มีปัจจัยที่เป็นโอกาส" onchange="toggleDetail(this,'O_4_2_detail')"><div class="radio-dot"></div>มีปัจจัย</label>
+          </div>
+          <div class="detail-area" style="display:none" id="O_4_2_detail"><textarea id="O_4_2_text" placeholder="กรุณาระบุรายละเอียด..."></textarea></div>
+        </div>
+      </div>
+
+      <div class="dim-header">4.3 ด้านเศรษฐกิจ</div>
+      <div class="swot-block">
+        <div class="swot-block-header">สภาพเศรษฐกิจ ค่าครองชีพ แนวโน้มอาชีพ/การจ้างงาน ที่เป็นประโยชน์</div>
+        <div class="swot-block-body">
+          <div class="radio-group">
+            <label class="radio-choice"><input type="radio" name="O_4_3" value="ไม่มีปัจจัยที่เป็นโอกาส" onchange="toggleDetail(this,'O_4_3_detail')"><div class="radio-dot"></div>ไม่มีปัจจัย</label>
+            <label class="radio-choice"><input type="radio" name="O_4_3" value="มีปัจจัยที่เป็นโอกาส" onchange="toggleDetail(this,'O_4_3_detail')"><div class="radio-dot"></div>มีปัจจัย</label>
+          </div>
+          <div class="detail-area" style="display:none" id="O_4_3_detail"><textarea id="O_4_3_text" placeholder="กรุณาระบุรายละเอียด..."></textarea></div>
+        </div>
+      </div>
+
+      <div class="dim-header">4.4 ด้านสังคม</div>
+      <div class="swot-block">
+        <div class="swot-block-header">ชุมชน วัด สมาคม ขนบธรรมเนียม วัฒนธรรมท้องถิ่น ที่เป็นประโยชน์ต่อโรงเรียน</div>
+        <div class="swot-block-body">
+          <div class="radio-group">
+            <label class="radio-choice"><input type="radio" name="O_4_4" value="ไม่มีปัจจัยที่เป็นโอกาส" onchange="toggleDetail(this,'O_4_4_detail')"><div class="radio-dot"></div>ไม่มีปัจจัย</label>
+            <label class="radio-choice"><input type="radio" name="O_4_4" value="มีปัจจัยที่เป็นโอกาส" onchange="toggleDetail(this,'O_4_4_detail')"><div class="radio-dot"></div>มีปัจจัย</label>
+          </div>
+          <div class="detail-area" style="display:none" id="O_4_4_detail"><textarea id="O_4_4_text" placeholder="กรุณาระบุรายละเอียด..."></textarea></div>
+        </div>
+      </div>
+
+      <div class="dim-header">4.5 ด้านเทคโนโลยี</div>
+      <div class="swot-block">
+        <div class="swot-block-header">เทคโนโลยีปัจจุบันและแนวโน้มในอนาคต ที่เป็นประโยชน์ต่อการดำเนินงาน</div>
+        <div class="swot-block-body">
+          <div class="radio-group">
+            <label class="radio-choice"><input type="radio" name="O_4_5" value="ไม่มีปัจจัยที่เป็นโอกาส" onchange="toggleDetail(this,'O_4_5_detail')"><div class="radio-dot"></div>ไม่มีปัจจัย</label>
+            <label class="radio-choice"><input type="radio" name="O_4_5" value="มีปัจจัยที่เป็นโอกาส" onchange="toggleDetail(this,'O_4_5_detail')"><div class="radio-dot"></div>มีปัจจัย</label>
+          </div>
+          <div class="detail-area" style="display:none" id="O_4_5_detail"><textarea id="O_4_5_text" placeholder="กรุณาระบุรายละเอียด..."></textarea></div>
+        </div>
+      </div>
+
+      <div class="btn-row">
+        <button class="btn btn-outline" onclick="prevSection(3)">ย้อนกลับ</button>
+        <button class="btn btn-primary" onclick="nextSection(3)">ถัดไป</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- SECTION 4: อุปสรรค -->
+  <div class="section-card" id="section-4">
+    <div class="section-header">
+      <div class="section-num">5</div>
+      <div>
+        <div class="section-title">อุปสรรค (Threats)</div>
+        <div class="section-desc">ปัจจัยภายนอกที่อาจมีผลเสียหรือขัดขวางการดำเนินงาน</div>
+      </div>
+    </div>
+    <div class="section-body">
+      <span class="cat-badge cat-threat">ปัจจัยภายนอก - อุปสรรค</span>
+
+      <div class="dim-header">5.1 ด้านนักเรียน</div>
+      <div class="swot-block">
+        <div class="swot-block-header">คุณลักษณะผู้เรียนและแนวโน้มในอนาคต ที่อาจเป็นอุปสรรค</div>
+        <div class="swot-block-body">
+          <div class="radio-group">
+            <label class="radio-choice"><input type="radio" name="T_5_1" value="ไม่มีปัจจัยที่เป็นอุปสรรค" onchange="toggleDetail(this,'T_5_1_detail')"><div class="radio-dot"></div>ไม่มีปัจจัย</label>
+            <label class="radio-choice"><input type="radio" name="T_5_1" value="มีปัจจัยที่เป็นอุปสรรค" onchange="toggleDetail(this,'T_5_1_detail')"><div class="radio-dot"></div>มีปัจจัย</label>
+          </div>
+          <div class="detail-area" style="display:none" id="T_5_1_detail"><textarea id="T_5_1_text" placeholder="กรุณาระบุรายละเอียดอุปสรรค..."></textarea></div>
+        </div>
+      </div>
+
+      <div class="dim-header">5.2 ด้านการเมืองและนโยบาย</div>
+      <div class="swot-block">
+        <div class="swot-block-header">สภาพการเมือง นโยบายรัฐ กระทรวงฯ สพม. ที่อาจเป็นอุปสรรค</div>
+        <div class="swot-block-body">
+          <div class="radio-group">
+            <label class="radio-choice"><input type="radio" name="T_5_2" value="ไม่มีปัจจัยที่เป็นอุปสรรค" onchange="toggleDetail(this,'T_5_2_detail')"><div class="radio-dot"></div>ไม่มีปัจจัย</label>
+            <label class="radio-choice"><input type="radio" name="T_5_2" value="มีปัจจัยที่เป็นอุปสรรค" onchange="toggleDetail(this,'T_5_2_detail')"><div class="radio-dot"></div>มีปัจจัย</label>
+          </div>
+          <div class="detail-area" style="display:none" id="T_5_2_detail"><textarea id="T_5_2_text" placeholder="กรุณาระบุรายละเอียด..."></textarea></div>
+        </div>
+      </div>
+
+      <div class="dim-header">5.3 ด้านเศรษฐกิจ</div>
+      <div class="swot-block">
+        <div class="swot-block-header">สภาพเศรษฐกิจ รายได้ครัวเรือน แนวโน้มการจ้างงาน ที่อาจเป็นอุปสรรค</div>
+        <div class="swot-block-body">
+          <div class="radio-group">
+            <label class="radio-choice"><input type="radio" name="T_5_3" value="ไม่มีปัจจัยที่เป็นอุปสรรค" onchange="toggleDetail(this,'T_5_3_detail')"><div class="radio-dot"></div>ไม่มีปัจจัย</label>
+            <label class="radio-choice"><input type="radio" name="T_5_3" value="มีปัจจัยที่เป็นอุปสรรค" onchange="toggleDetail(this,'T_5_3_detail')"><div class="radio-dot"></div>มีปัจจัย</label>
+          </div>
+          <div class="detail-area" style="display:none" id="T_5_3_detail"><textarea id="T_5_3_text" placeholder="กรุณาระบุรายละเอียด..."></textarea></div>
+        </div>
+      </div>
+
+      <div class="dim-header">5.4 ด้านสังคม</div>
+      <div class="swot-block">
+        <div class="swot-block-header">สภาพแวดล้อมทางสังคม ชุมชน วัฒนธรรม ที่อาจเป็นอุปสรรค</div>
+        <div class="swot-block-body">
+          <div class="radio-group">
+            <label class="radio-choice"><input type="radio" name="T_5_4" value="ไม่มีปัจจัยที่เป็นอุปสรรค" onchange="toggleDetail(this,'T_5_4_detail')"><div class="radio-dot"></div>ไม่มีปัจจัย</label>
+            <label class="radio-choice"><input type="radio" name="T_5_4" value="มีปัจจัยที่เป็นอุปสรรค" onchange="toggleDetail(this,'T_5_4_detail')"><div class="radio-dot"></div>มีปัจจัย</label>
+          </div>
+          <div class="detail-area" style="display:none" id="T_5_4_detail"><textarea id="T_5_4_text" placeholder="กรุณาระบุรายละเอียด..."></textarea></div>
+        </div>
+      </div>
+
+      <div class="dim-header">5.5 ด้านเทคโนโลยี</div>
+      <div class="swot-block">
+        <div class="swot-block-header">เทคโนโลยีและแนวโน้มที่อาจขัดขวางการดำเนินงานของโรงเรียน</div>
+        <div class="swot-block-body">
+          <div class="radio-group">
+            <label class="radio-choice"><input type="radio" name="T_5_5" value="ไม่มีปัจจัยที่เป็นอุปสรรค" onchange="toggleDetail(this,'T_5_5_detail')"><div class="radio-dot"></div>ไม่มีปัจจัย</label>
+            <label class="radio-choice"><input type="radio" name="T_5_5" value="มีปัจจัยที่เป็นอุปสรรค" onchange="toggleDetail(this,'T_5_5_detail')"><div class="radio-dot"></div>มีปัจจัย</label>
+          </div>
+          <div class="detail-area" style="display:none" id="T_5_5_detail"><textarea id="T_5_5_text" placeholder="กรุณาระบุรายละเอียด..."></textarea></div>
+        </div>
+      </div>
+
+      <div class="btn-row">
+        <button class="btn btn-outline" onclick="prevSection(4)">ย้อนกลับ</button>
+        <button class="btn btn-primary" onclick="nextSection(4)">ถัดไป</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- SECTION 5: ข้อเสนอแนะ -->
+  <div class="section-card" id="section-5">
+    <div class="section-header">
+      <div class="section-num">6</div>
+      <div>
+        <div class="section-title">ข้อเสนอแนะเพิ่มเติม</div>
+        <div class="section-desc">ความคาดหวังและข้อเสนอแนะต่อโรงเรียนคลองลานวิทยา</div>
+      </div>
+    </div>
+    <div class="section-body">
+      <div id="alert-5" class="alert alert-error"></div>
+
+      <div class="field-group">
+        <label class="field-label">6.1 โครงการ กิจกรรม หรือปัจจัยที่ส่งเสริมความผูกพันระหว่างนักเรียน ครู บุคลากร กับโรงเรียน</label>
+        <textarea id="F_6_1" placeholder="กรุณาระบุข้อเสนอแนะ (สามารถเสนอแนะมากกว่า 1 ข้อ)..."></textarea>
+      </div>
+      <div class="field-group">
+        <label class="field-label">6.2 ความคาดหวังต่อโรงเรียนหรือความสำเร็จที่ต้องการให้เกิดขึ้น</label>
+        <textarea id="F_6_2" placeholder="กรุณาระบุความคาดหวัง (สามารถเสนอแนะมากกว่า 1 ข้อ)..."></textarea>
+      </div>
+      <div class="field-group">
+        <label class="field-label">6.3 ข้อเสนอแนะอื่น ๆ (ถ้ามี)</label>
+        <textarea id="F_6_3" placeholder="ข้อเสนอแนะเพิ่มเติม..."></textarea>
+      </div>
+
+      <div class="btn-row">
+        <button class="btn btn-outline" onclick="prevSection(5)">ย้อนกลับ</button>
+        <button class="btn btn-success" onclick="submitForm()">ส่งแบบสอบถาม</button>
+      </div>
+    </div>
+  </div>
+
+</main>
+
+<script>
+// ============================================================
+// CONFIGURATION — เปลี่ยน URL ตรงนี้หลัง Deploy Apps Script
+// ============================================================
+const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbz-Y1CCjimB1yHjAQp--JykHYow713rj0jT6KDqOPCWbFJwAPA5z2UGUlCKC_KPk1a6/exec';
+
+// ============================================================
+// NAVIGATION
+// ============================================================
+let currentSection = 0;
+const totalSections = 6;
+
+function updateProgress(step) {
+  const fill = ((step) / (totalSections - 1)) * 100;
+  document.getElementById('progress-fill').style.width = fill + '%';
+  document.querySelectorAll('.step-dot').forEach((el, i) => {
+    el.classList.remove('active', 'done');
+    if (i === step) el.classList.add('active');
+    else if (i < step) el.classList.add('done');
+  });
+}
+
+function showSection(n) {
+  document.querySelectorAll('.section-card').forEach(el => el.classList.remove('active'));
+  const sec = document.getElementById('section-' + n);
+  if (sec) { sec.classList.add('active'); sec.scrollIntoView({ behavior: 'smooth', block: 'start' }); }
+  updateProgress(n);
+  currentSection = n;
+}
+
+function nextSection(from) {
+  if (from === 0) {
+    if (!validateSection0()) return;
+  }
+  if (from < totalSections - 1) showSection(from + 1);
+}
+
+function prevSection(from) {
+  if (from > 0) showSection(from - 1);
+}
+
+function validateSection0() {
+  const name = document.getElementById('f-name').value.trim();
+  const email = document.getElementById('f-email').value.trim();
+  const role = document.getElementById('f-role').value;
+  const alert = document.getElementById('alert-0');
+  if (!name) { showAlert(alert, 'กรุณากรอกชื่อ-นามสกุล'); return false; }
+  if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+    showAlert(alert, 'กรุณากรอกอีเมลให้ถูกต้อง'); return false;
+  }
+  if (!role) { showAlert(alert, 'กรุณาเลือกสถานะผู้ตอบแบบสอบถาม'); return false; }
+  hideAlert(alert); return true;
+}
+
+function showAlert(el, msg) {
+  el.textContent = msg; el.classList.add('show');
+  el.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}
+function hideAlert(el) { el.classList.remove('show'); }
+
+// ============================================================
+// TOGGLE DETAIL TEXTAREA
+// ============================================================
+function toggleDetail(radio, detailId) {
+  const detail = document.getElementById(detailId);
+  if (!detail) return;
+  const needDetail = radio.value.includes('มี');
+  detail.style.display = needDetail ? 'block' : 'none';
+}
+
+
+
+// ============================================================
+// COLLECT FORM DATA
+// ============================================================
+function collectData() {
+  const d = {};
+  d.timestamp = new Date().toLocaleString('th-TH', { timeZone: 'Asia/Bangkok' });
+  d.name = document.getElementById('f-name').value.trim();
+  d.email = document.getElementById('f-email').value.trim();
+  d.role = document.getElementById('f-role').value;
+
+  const fields = [
+    'S_2_1_1','S_2_1_2','S_2_2_1','S_2_2_2',
+    'S_2_3_1','S_2_3_2','S_2_3_3','S_2_3_4','S_2_3_5',
+    'S_2_4_1','S_2_4_2','S_2_5_1','S_2_5_2','S_2_6_1',
+    'W_3_1_1','W_3_1_2','W_3_2_1','W_3_2_2',
+    'W_3_3_1','W_3_3_2','W_3_3_3','W_3_3_4','W_3_3_5',
+    'W_3_4_1','W_3_4_2','W_3_5_1','W_3_5_2','W_3_6_1',
+    'O_4_1','O_4_2','O_4_3','O_4_4','O_4_5',
+    'T_5_1','T_5_2','T_5_3','T_5_4','T_5_5'
+  ];
+
+  fields.forEach(f => {
+    const radios = document.querySelectorAll(`input[name="${f}"]`);
+    let val = '';
+    radios.forEach(r => { if (r.checked) val = r.value; });
+    d[f] = val;
+    const txt = document.getElementById(f + '_text');
+    d[f + '_detail'] = txt ? txt.value.trim() : '';
+  });
+
+  d.suggest_1 = document.getElementById('F_6_1').value.trim();
+  d.suggest_2 = document.getElementById('F_6_2').value.trim();
+  d.suggest_3 = document.getElementById('F_6_3').value.trim();
+  return d;
+}
+
+// ============================================================
+// SUBMIT + RENDER RESULTS
+// ============================================================
+
+// ค่าเฉลี่ยอ้างอิง (%) สำหรับเปรียบเทียบ (ค่าสมมติจากการสำรวจโรงเรียนทั่วไป)
+const BENCHMARK = {
+  strength: { โครงสร้าง: 65, คุณภาพผู้เรียน: 58, บุคลากร: 70, งบประมาณ: 45, วัสดุอาคาร: 52, บริหาร: 60 },
+  weakness:  { โครงสร้าง: 40, คุณภาพผู้เรียน: 55, บุคลากร: 35, งบประมาณ: 65, วัสดุอาคาร: 58, บริหาร: 42 },
+  opportunity: { นักเรียน: 62, การเมืองนโยบาย: 55, เศรษฐกิจ: 48, สังคม: 70, เทคโนโลยี: 72 },
+  threat:      { นักเรียน: 45, การเมืองนโยบาย: 52, เศรษฐกิจ: 60, สังคม: 38, เทคโนโลยี: 55 }
+};
+
+function calcScores(data) {
+  // จุดแข็ง รายมิติ
+  const sFields = {
+    โครงสร้าง:       ['S_2_1_1','S_2_1_2'],
+    คุณภาพผู้เรียน:  ['S_2_2_1','S_2_2_2'],
+    บุคลากร:         ['S_2_3_1','S_2_3_2','S_2_3_3','S_2_3_4','S_2_3_5'],
+    งบประมาณ:        ['S_2_4_1','S_2_4_2'],
+    วัสดุอาคาร:      ['S_2_5_1','S_2_5_2'],
+    บริหาร:          ['S_2_6_1'],
+  };
+  const wFields = {
+    โครงสร้าง:       ['W_3_1_1','W_3_1_2'],
+    คุณภาพผู้เรียน:  ['W_3_2_1','W_3_2_2'],
+    บุคลากร:         ['W_3_3_1','W_3_3_2','W_3_3_3','W_3_3_4','W_3_3_5'],
+    งบประมาณ:        ['W_3_4_1','W_3_4_2'],
+    วัสดุอาคาร:      ['W_3_5_1','W_3_5_2'],
+    บริหาร:          ['W_3_6_1'],
+  };
+  const oFields = {
+    นักเรียน:        ['O_4_1'],
+    การเมืองนโยบาย: ['O_4_2'],
+    เศรษฐกิจ:       ['O_4_3'],
+    สังคม:           ['O_4_4'],
+    เทคโนโลยี:      ['O_4_5'],
+  };
+  const tFields = {
+    นักเรียน:        ['T_5_1'],
+    การเมืองนโยบาย: ['T_5_2'],
+    เศรษฐกิจ:       ['T_5_3'],
+    สังคม:           ['T_5_4'],
+    เทคโนโลยี:      ['T_5_5'],
+  };
+
+  function calcGroup(fieldMap, keyword) {
+    const result = {};
+    let total = 0, hit = 0;
+    Object.entries(fieldMap).forEach(([dim, keys]) => {
+      const dimHit = keys.filter(k => String(data[k]||'').includes(keyword)).length;
+      result[dim] = Math.round(dimHit / keys.length * 100);
+      total += keys.length; hit += dimHit;
+    });
+    result._total = hit;
+    result._max = total;
+    result._pct = Math.round(hit / total * 100);
+    return result;
+  }
+
+  return {
+    s: calcGroup(sFields, 'มีจุดแข็ง'),
+    w: calcGroup(wFields, 'มีจุดอ่อน'),
+    o: calcGroup(oFields, 'มีปัจจัย'),
+    t: calcGroup(tFields, 'มีปัจจัย'),
+  };
+}
+
+function renderDetailBars(containerId, scoreObj, colorClass, keyword) {
+  const el = document.getElementById(containerId);
+  if (!el) return;
+  const entries = Object.entries(scoreObj).filter(([k]) => !k.startsWith('_'));
+  el.innerHTML = entries.map(([dim, pct]) => `
+    <div class="score-row">
+      <div class="score-label">${dim}</div>
+      <div class="score-bar-wrap">
+        <div class="score-bar ${colorClass}" style="width:0%" data-target="${pct}"></div>
+      </div>
+      <div class="score-pct">${pct}%</div>
+    </div>
+  `).join('');
+  // animate bars
+  setTimeout(() => {
+    el.querySelectorAll('.score-bar').forEach(bar => {
+      bar.style.width = bar.dataset.target + '%';
+    });
+  }, 200);
+}
+
+function renderRadarChart(scores) {
+  const labels = ['โครงสร้าง', 'คุณภาพ\nผู้เรียน', 'บุคลากร', 'งบประมาณ', 'วัสดุ\nอาคาร', 'บริหาร'];
+  const myData    = labels.map(l => scores.s[l.replace('\n','')] ?? scores.s[Object.keys(scores.s).find(k => k.includes(l.replace('\n',''))) ] ?? 0);
+  const benchData = labels.map(l => {
+    const key = l.replace('\n','');
+    return BENCHMARK.strength[key] ?? BENCHMARK.strength[Object.keys(BENCHMARK.strength).find(k => k.includes(key))] ?? 50;
+  });
+
+  const ctx = document.getElementById('radarChart').getContext('2d');
+  new Chart(ctx, {
+    type: 'radar',
+    data: {
+      labels: ['โครงสร้าง','คุณภาพผู้เรียน','บุคลากร','งบประมาณ','วัสดุ/อาคาร','บริหาร'],
+      datasets: [
+        {
+          label: 'คำตอบของท่าน',
+          data: myData,
+          backgroundColor: 'rgba(26,95,168,0.15)',
+          borderColor: '#1a5fa8',
+          borderWidth: 2.5,
+          pointBackgroundColor: '#1a5fa8',
+          pointRadius: 5, pointHoverRadius: 7,
+        },
+        {
+          label: 'ค่าเฉลี่ยอ้างอิง',
+          data: benchData,
+          backgroundColor: 'rgba(240,165,0,0.12)',
+          borderColor: '#f0a500',
+          borderWidth: 2,
+          borderDash: [5,4],
+          pointBackgroundColor: '#f0a500',
+          pointRadius: 4, pointHoverRadius: 6,
+        }
+      ]
+    },
+    options: {
+      responsive: true,
+      scales: {
+        r: {
+          min: 0, max: 100,
+          ticks: { stepSize: 25, font: { size: 10, family: 'Sarabun' }, color: '#8a9bb5' },
+          pointLabels: { font: { size: 12, family: 'Sarabun', weight: '600' }, color: '#1e2a3a' },
+          grid: { color: '#eef2f7' },
+          angleLines: { color: '#dce3ed' },
+        }
+      },
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          callbacks: {
+            label: ctx => ` ${ctx.dataset.label}: ${ctx.raw}%`
+          },
+          titleFont: { family: 'Sarabun' },
+          bodyFont: { family: 'Sarabun' },
+        }
+      }
+    }
+  });
+}
+
+function renderCompareChart(scores) {
+  const ctx = document.getElementById('compareChart').getContext('2d');
+  const categories = ['จุดแข็ง (S)', 'จุดอ่อน (W)', 'โอกาส (O)', 'อุปสรรค (T)'];
+  const myVals    = [scores.s._pct, scores.w._pct, scores.o._pct, scores.t._pct];
+  const benchVals = [
+    Math.round(Object.values(BENCHMARK.strength).reduce((a,b)=>a+b,0)/Object.values(BENCHMARK.strength).length),
+    Math.round(Object.values(BENCHMARK.weakness).reduce((a,b)=>a+b,0)/Object.values(BENCHMARK.weakness).length),
+    Math.round(Object.values(BENCHMARK.opportunity).reduce((a,b)=>a+b,0)/Object.values(BENCHMARK.opportunity).length),
+    Math.round(Object.values(BENCHMARK.threat).reduce((a,b)=>a+b,0)/Object.values(BENCHMARK.threat).length),
+  ];
+
+  new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels: categories,
+      datasets: [
+        {
+          label: 'คำตอบของท่าน (%)',
+          data: myVals,
+          backgroundColor: ['rgba(26,143,90,0.8)','rgba(192,57,43,0.8)','rgba(26,95,168,0.8)','rgba(240,165,0,0.8)'],
+          borderRadius: 8, borderSkipped: false,
+        },
+        {
+          label: 'ค่าเฉลี่ยอ้างอิง (%)',
+          data: benchVals,
+          backgroundColor: 'rgba(0,0,0,0)',
+          borderColor: ['#1a8f5a','#c0392b','#1a5fa8','#f0a500'],
+          borderWidth: 2,
+          borderDash: [5,4],
+          type: 'bar',
+          borderRadius: 8, borderSkipped: false,
+        }
+      ]
+    },
+    options: {
+      responsive: true,
+      plugins: {
+        legend: {
+          display: true,
+          labels: { font: { family: 'Sarabun', size: 12 }, usePointStyle: true, pointStyle: 'circle' }
+        },
+        tooltip: {
+          callbacks: { label: ctx => ` ${ctx.dataset.label}: ${ctx.raw}%` },
+          titleFont: { family: 'Sarabun' },
+          bodyFont: { family: 'Sarabun' },
+        }
+      },
+      scales: {
+        y: {
+          min: 0, max: 100,
+          ticks: { font: { family: 'Sarabun', size: 11 }, callback: v => v + '%' },
+          grid: { color: '#eef2f7' },
+        },
+        x: {
+          ticks: { font: { family: 'Sarabun', size: 12, weight: '600' } },
+          grid: { display: false }
+        }
+      }
+    }
+  });
+}
+
+function showResults(data) {
+  const scores = calcScores(data);
+
+  // Update matrix scores
+  document.getElementById('score-s').textContent = scores.s._total;
+  document.getElementById('score-s-sub').textContent = `จากทั้งหมด ${scores.s._max} ข้อ (${scores.s._pct}%)`;
+  document.getElementById('score-w').textContent = scores.w._total;
+  document.getElementById('score-w-sub').textContent = `จากทั้งหมด ${scores.w._max} ข้อ (${scores.w._pct}%)`;
+  document.getElementById('score-o').textContent = scores.o._total;
+  document.getElementById('score-o-sub').textContent = `จากทั้งหมด ${scores.o._max} ข้อ (${scores.o._pct}%)`;
+  document.getElementById('score-t').textContent = scores.t._total;
+  document.getElementById('score-t-sub').textContent = `จากทั้งหมด ${scores.t._max} ข้อ (${scores.t._pct}%)`;
+
+  // Render detail bars
+  renderDetailBars('detail-strength',   scores.s, 'rh-strength-bar',   'มีจุดแข็ง');
+  renderDetailBars('detail-weakness',   scores.w, 'rh-weakness-bar',   'มีจุดอ่อน');
+  renderDetailBars('detail-opportunity',scores.o, 'rh-opportunity-bar','มีปัจจัย');
+  renderDetailBars('detail-threat',     scores.t, 'rh-threat-bar',     'มีปัจจัย');
+
+  // Render charts (slight delay so canvas is visible)
+  setTimeout(() => {
+    renderRadarChart(scores);
+    renderCompareChart(scores);
+  }, 100);
+}
+
+async function submitForm() {
+  const data = collectData();
+  document.getElementById('loading-overlay').classList.add('show');
+
+  try {
+    await fetch(APPS_SCRIPT_URL, {
+      method: 'POST',
+      mode: 'no-cors',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data)
+    });
+  } catch(e) { /* no-cors mode always throws, ignore */ }
+
+  document.getElementById('loading-overlay').classList.remove('show');
+  document.querySelectorAll('.section-card').forEach(el => el.style.display = 'none');
+  document.getElementById('success-screen').classList.add('show');
+  document.querySelector('.progress-wrap').style.display = 'none';
+  updateProgress(5);
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+  showResults(data);
+}
+</script>
+</body>
+</html>
